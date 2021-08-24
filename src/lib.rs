@@ -31,16 +31,16 @@ pub struct Swap<AccountId, TokenId> {
 	account: AccountId,
 }
 
-type BalanceOf<T> = <<T as Trait>::Currency as Currency<<T as frame_system::Trait>::AccountId>>::Balance;
+type BalanceOf<T> = <<T as Config>::Currency as Currency<<T as frame_system::Config>::AccountId>>::Balance;
 
 /// The swap's module id, used for deriving sovereign account IDs.
 const MODULE_ID: ModuleId = ModuleId(*b"mtg/swap");
 
 /// The pallet's configuration trait.
-pub trait Trait: frame_system::Trait + fungible::Trait {
+pub trait Config: frame_system::Config + fungible::Config {
 
 	/// The overarching event type.
-    type Event: From<Event<Self>> + Into<<Self as frame_system::Trait>::Event>;
+    type Event: From<Event<Self>> + Into<<Self as frame_system::Config>::Event>;
     
     type SwapId: Parameter + Member + AtLeast32Bit + Default + Copy
 		+ MaybeSerializeDeserialize;
@@ -50,7 +50,7 @@ pub trait Trait: frame_system::Trait + fungible::Trait {
 
 // Storage items for the Swap pallet.
 decl_storage! {
-	trait Store for Module<T: Trait> as SwapStorage {
+	trait Store for Module<T: Config> as SwapStorage {
 		TokenToSwap get(fn token_to_swap): map hasher(opaque_blake2_256) T::TokenId => T::SwapId;
 		Swaps get(fn swaps): map hasher(opaque_blake2_256) T::SwapId => Option<Swap<T::AccountId, T::TokenId>>;
 		SwapCount get(fn swap_count): T::SwapId;
@@ -61,10 +61,10 @@ decl_storage! {
 decl_event!(
 	pub enum Event<T> 
 	where
-		AccountId = <T as frame_system::Trait>::AccountId,
+		AccountId = <T as frame_system::Config>::AccountId,
 		BalanceOf = BalanceOf<T>,
-		Id = <T as Trait>::SwapId,
-		TokenBalance = <T as fungible::Trait>::TokenBalance
+		Id = <T as Config>::SwapId,
+		TokenBalance = <T as fungible::Config>::TokenBalance
 	{
 		/// Logs (SwapId, SwapAccount)
 		SwapCreated(Id, AccountId),
@@ -81,7 +81,7 @@ decl_event!(
 
 // Errors for the Swap pallet.
 decl_error! {
-	pub enum Error for Module<T: Trait> {
+	pub enum Error for Module<T: Config> {
 		/// Deadline hit.
 		Deadline,
 		/// Zero tokens supplied.
@@ -120,7 +120,7 @@ decl_error! {
 // The pallet's dispatchable functions.
 decl_module! {
 	/// The module declaration.
-	pub struct Module<T: Trait> for enum Call where origin: T::Origin {
+	pub struct Module<T: Config> for enum Call where origin: T::Origin {
 
 		type Error = Error<T>;
 
@@ -410,7 +410,7 @@ decl_module! {
 	}
 }
 
-impl<T: Trait> Module<T> {
+impl<T: Config> Module<T> {
 	pub fn get_currency_to_token_input_price(swap: &Swap<T::AccountId, T::TokenId>, currency_sold: BalanceOf<T>)
 		-> T::TokenBalance
 	{

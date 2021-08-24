@@ -1,13 +1,13 @@
 [package]
 name = "pallet-swaps"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Logan Saether <x@logansaether.com>"]
 edition = "2018"
 
 [dependencies.pallet-balances]
 default-features = false
 package = 'pallet-balances'
-version = '2.0.0'
+version = '3.0.0'
 
 [dependencies.pallet-fungible]
 default-features = false
@@ -17,31 +17,35 @@ path = './fungible'
 default-features = false
 features = ['derive']
 package = 'parity-scale-codec'
-version = '1.3.4'
+version = '2.0.0'
 
 [dependencies.frame-support]
 default-features = false
-version = '2.0.0'
+version = '3.0.0'
 
 [dependencies.safe-mix]
 default-features = false
-version = '1.0.0'
+version = '1.0.1'
 
 [dependencies.frame-system]
 default-features = false
-version = '2.0.0'
+version = '3.0.0'
 
 [dev-dependencies.sp-core]
 default-features = false
-version = '2.0.0'
+version = '3.0.0'
 
 [dev-dependencies.sp-io]
 default-features = false
-version = '2.0.0'
+version = '3.0.0'
+
+[dev-dependencies.serde]
+default-features = false
+version = '1.0.119'
 
 [dependencies.sp-runtime]
 default-features = false
-version = '2.0.0'
+version = '3.0.0'
 
 [features]
 default = ['std']
@@ -51,5 +55,6 @@ std = [
     'safe-mix/std',
     'frame-system/std',
     'sp-runtime/std',
-    'pallet-balances/std'
+    'pallet-balances/std',
+    'pallet-fungible/std'
 ]

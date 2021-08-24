@@ -17,9 +17,9 @@ mod mock;
 #[cfg(test)]
 mod tests;
 
-pub trait Trait: frame_system::Trait {
+pub trait Config: frame_system::Config {
     /// The overarching event type.
-    type Event: From<Event<Self>> + Into<<Self as frame_system::Trait>::Event>;
+    type Event: From<Event<Self>> + Into<<Self as frame_system::Config>::Event>;
 
     type TokenBalance: Parameter + Member + AtLeast32Bit + Default + Copy
         + MaybeSerializeDeserialize;
@@ -31,9 +31,9 @@ pub trait Trait: frame_system::Trait {
 decl_event!(
     pub enum Event<T>
     where
-        <T as frame_system::Trait>::AccountId,
-        <T as Trait>::TokenBalance,
-        <T as Trait>::TokenId,
+        <T as frame_system::Config>::AccountId,
+        <T as Config>::TokenBalance,
+        <T as Config>::TokenId,
     {
         NewToken(TokenId, AccountId, TokenBalance),
         /// <from, to, amount>
@@ -45,7 +45,7 @@ decl_event!(
 
 decl_error! {
     /// Errors for the fungible pallet.
-    pub enum Error for Module<T: Trait> {
+    pub enum Error for Module<T: Config> {
         /// Overflow during creation.
         CreationOverflow,
         /// Attempted to transfer zero tokens.
@@ -58,7 +58,7 @@ decl_error! {
 }
 
 decl_storage!(
-    trait Store for Module<T: Trait> as Fungible {
+    trait Store for Module<T: Config> as Fungible {
         TokenCount get(fn token_count): T::TokenId;
 
         /// ERC20 compatible.
@@ -70,7 +70,7 @@ decl_storage!(
 );
 
 decl_module!(
-    pub struct Module<T: Trait> for enum Call where origin: T::Origin {
+    pub struct Module<T: Config> for enum Call where origin: T::Origin {
 
         type Error = Error<T>;
 
@@ -175,7 +175,7 @@ decl_module!(
     }
 );
 
-impl<T: Trait> Module<T> {
+impl<T: Config> Module<T> {
     pub fn mint(id: T::TokenId, to: T::AccountId, amount: T::TokenBalance)
         -> dispatch::DispatchResult
     {
